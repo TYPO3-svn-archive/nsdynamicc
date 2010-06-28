@@ -82,3 +82,68 @@ var dcolumn;
 Event.observe(window, "load", function() {
 		dcolumn = new DcolumnClass();
 });
+
+
+//*************************************************************//
+//ceate a class for collapse the record table suing Ajax and javascript
+
+var CollapseClass = Class.create({
+		
+		initialize:function(){
+				this.obj = '';
+				this.collapsed = '';
+				this.table	= '';
+		//get the click object 
+		var collapseIcon = $$('table.typo3-dblist thead td.col-icon a'); 
+		collapseIcon.each(function(Element){
+        //call helper function to do other cool stuff
+    		Element.observe("click", function(event) {
+						
+						this.obj = event.element();																
+						var getData = this.obj.up().readAttribute("data-collapse");
+								
+						var getDataObject = getData.split(",");
+								this.table	= 'collapse['+ getDataObject[0] + ']';
+								this.collapsed =	getDataObject[1];
+								
+				var getGroups = new Ajax.Request('ajax.php', {
+						method: 'get',
+						parameters: 'ajaxID=tx_nsdynamicc::updateAjaxCollapse&'+this.table+'='+ this.collapsed,
+						onComplete: this.showHideTable.bind(this)
+				});
+				
+						return false;
+				}.bind(this));										
+    }.bind(this));
+		},
+		//show or hide the record table 
+		showHideTable: function(xhr){
+				//to hide the record table
+				if(this.collapsed == 1){
+						this.obj.up('.typo3-dblist').down('tbody').hide();
+						this.obj.removeClassName("t3-icon-view-list-collapse").addClassName("t3-icon-view-list-expand");
+						//reset the data in click object
+						this.resetTableClickData(0);				
+				}
+				if(this.collapsed == 0){
+						this.obj.up('.typo3-dblist').down('tbody').show();
+						this.obj.removeClassName("t3-icon-view-list-expand").addClassName("t3-icon-view-list-collapse");
+						//reset the data in click object
+						this.resetTableClickData(1);
+				}
+
+		},
+		
+		resetTableClickData: function(collapseOption){
+				data = this.table+','+collapseOption;
+				this.obj.up().writeAttribute("data-collapse",data);
+		}
+});
+		
+// Global variable for the instance of the class
+var collapse;
+// Creating an instance of the class if the page has finished loading
+Event.observe(window, "load", function() {
+		collapse = new CollapseClass();
+});
+			

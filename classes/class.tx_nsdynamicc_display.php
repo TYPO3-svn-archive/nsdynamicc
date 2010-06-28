@@ -81,13 +81,13 @@ class tx_nsdynamicc_display {
 			$formElements=array('<form action="'.htmlspecialchars($dblist->listURL($id,$table)).'" method="post">','</form>');
 		}
 
-			// Load already selected fields, if any:		
+		// Load already selected fields, if any:			
 		$setFields=is_array($dblist->setFields[$table]) ? $dblist->setFields[$table] : array();
 		
-			// Request fields from table:
+		// Request fields from table:
 		$fields = $dblist->makeFieldList($table, false, true);
 
-			// Add pseudo "control" fields
+		// Add pseudo "control" fields
 		$fields[]='_PATH_';
 		$fields[]='_REF_';
 		$fields[]='_LOCALIZATION_';

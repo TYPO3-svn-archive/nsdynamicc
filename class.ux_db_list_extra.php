@@ -14,6 +14,114 @@
 // ***************************
 class ux_localRecordList extends  localRecordList {
 	
+	/**
+	 * Initializes the list generation
+	 *
+	 * @param	integer		Page id for which the list is rendered. Must be >= 0
+	 * @param	string		Tablename - if extended mode where only one table is listed at a time.
+	 * @param	integer		Browsing pointer.
+	 * @param	string		Search word, if any
+	 * @param	integer		Number of levels to search down the page tree
+	 * @param	integer		Limit of records to be listed.
+	 * @return	void
+	 */
+		
+	function start($id,$table,$pointer,$search="",$levels="",$showLimit=0)	{
+				global $TCA;
+
+			// Setting internal variables:
+		$this->id=intval($id);					// sets the parent id
+		if ($TCA[$table])	$this->table=$table;		// Setting single table mode, if table exists:
+		$this->firstElementNumber=$pointer;
+		$this->searchString=trim($search);
+		$this->searchLevels=trim($levels);
+		$this->showLimit=t3lib_div::intInRange($showLimit,0,10000);
+
+			// Setting GPvars:
+		$this->csvOutput = t3lib_div::_GP('csv') ? TRUE : FALSE;
+		$this->sortField = t3lib_div::_GP('sortField');
+		$this->sortRev = t3lib_div::_GP('sortRev');
+		$this->displayFields = t3lib_div::_GP('displayFields');		
+		$this->duplicateField = t3lib_div::_GP('duplicateField');
+
+		if (t3lib_div::_GP('justLocalized'))	{
+			$this->localizationRedirect(t3lib_div::_GP('justLocalized'));
+		}
+
+			// If thumbnails are disabled, set the "notfound" icon as default:
+		if (!$GLOBALS['TYPO3_CONF_VARS']['GFX']['thumbnails'])	{
+			$this->thumbScript='gfx/notfound_thumb.gif';
+		}
+
+			// Init dynamic vars:
+		$this->counter=0;
+		$this->JScode='';
+		$this->HTMLcode='';
+
+			// limits
+		if(isset($this->modTSconfig['properties']['itemsLimitPerTable'])) {
+			$this->itemsLimitPerTable = t3lib_div::intInRange(intval($this->modTSconfig['properties']['itemsLimitPerTable']), 1, 10000);
+		}
+		if(isset($this->modTSconfig['properties']['itemsLimitSingleTable'])) {
+			$this->itemsLimitSingleTable = t3lib_div::intInRange(intval($this->modTSconfig['properties']['itemsLimitSingleTable']), 1, 10000);
+		}
+
+			// Set select levels:
+		$sL=intval($this->searchLevels);
+		$this->perms_clause = $GLOBALS['BE_USER']->getPagePermsClause(1);
+
+			// this will hide records from display - it has nothing todo with user rights!!
+		if ($pidList = $GLOBALS['BE_USER']->getTSConfigVal('options.hideRecords.pages')) {
+			if ($pidList = $GLOBALS['TYPO3_DB']->cleanIntList($pidList)) {
+				$this->perms_clause .= ' AND pages.uid NOT IN ('.$pidList.')';
+			}
+		}
+
+		// Get configuration of collapsed tables from user uc and merge with sanitized GP vars
+		$this->tablesCollapsed = is_array($GLOBALS['BE_USER']->uc['moduleData']['db_list.php']) ? $GLOBALS['BE_USER']->uc['moduleData']['db_list.php'] : array();		
+		
+		
+		/**
+		 *remove this collapse table configurations setup to ajax functionality by sameera
+		 *
+		  $collapseOverride = t3lib_div::_GP('collapse');
+		if (is_array($collapseOverride)) {				
+			foreach($collapseOverride as $collapseTable => $collapseValue) {
+				if (is_array($GLOBALS['TCA'][$collapseTable]) && ($collapseValue == 0 || $collapseValue == 1)) {
+					$this->tablesCollapsed[$collapseTable] = $collapseValue;
+				}
+			}
+			// Save modified user uc
+			$GLOBALS['BE_USER']->uc['moduleData']['db_list.php'] = $this->tablesCollapsed;
+			$GLOBALS['BE_USER']->writeUC($GLOBALS['BE_USER']->uc);
+			if (t3lib_div::_GP('returnUrl')) {
+				$location = t3lib_div::_GP('returnUrl');
+				t3lib_utility_Http::redirect($location);
+			}
+		} */
+
+		if ($sL>0)	{
+			$tree = $this->getTreeObject($id,$sL,$this->perms_clause);
+			$this->pidSelect = 'pid IN ('.implode(',',$tree->ids).')';
+		} else {
+			$this->pidSelect = 'pid='.intval($id);
+		}
+
+			// Initialize languages:
+		if ($this->localizationView){
+			$this->initializeLanguages();
+		}
+	}
+	
+	
+		/**
+	 * Creates the listing of records from a single table
+	 *
+	 * @param	string		Table name
+	 * @param	integer		Page id
+	 * @param	string		List of fields to show in the listing. Pseudo fields will be added including the record header.
+	 * @return	string		HTML table with the listing for the record.
+	 */
 	function getTable($table,$id,$rowlist)	{		
 		
 		global $TCA, $TYPO3_CONF_VARS;
@@ -160,14 +268,15 @@ class ux_localRecordList extends  localRecordList {
 		// If the count query returned any number of records, we perform the real query, selecting records.
 		if ($this->totalItems){
 			// Fetch records only if not in single table mode or if in multi table mode and not collapsed
-			if ($listOnlyInSingleTableMode || (!$this->table && $tableCollapsed)) {
-				$dbCount = $this->totalItems;
-			} else {
+			//if ($listOnlyInSingleTableMode || (!$this->table && $tableCollapsed)) {
+			if ($listOnlyInSingleTableMode && (!$this->table)) {
+				$dbCount = $this->totalItems;				
+			} else {				
 					// set the showLimit to the number of records when outputting as CSV
 				if ($this->csvOutput) {
 					$this->showLimit = $this->totalItems;
 					$this->iLimit = $this->totalItems;
-				}
+				}				
 				$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
 				$dbCount = $GLOBALS['TYPO3_DB']->sql_num_rows($result);
 			}
@@ -196,8 +305,7 @@ class ux_localRecordList extends  localRecordList {
 
 				// CSH:
 			$theData[$titleCol].= t3lib_BEfunc::cshItem($table,'',$this->backPath,'',FALSE,'margin-bottom:0px; white-space: normal;');
-			//$theData['_DCOLUMN_'].= '<span><img src="'.t3lib_extMgm::extRelPath("nsdynamicc").'icon/icon-column.png" /></span>';			
-//			debug ($a, 'Output of variable',__FUNCTION__, __LINE__, __FILE__);			
+
 			if ($listOnlyInSingleTableMode)	{
 				$out.='
 					<tr>
@@ -218,19 +326,22 @@ class ux_localRecordList extends  localRecordList {
 				// Render collapse button if in multi table mode
 				$collapseIcon = '';
 				if (!$this->table) {
-					$collapseIcon = '<a href="' . htmlspecialchars($this->listURL()) . '&collapse[' . $table . ']=' . ($tableCollapsed ? '0' : '1') . '" title="' . ($tableCollapsed ? $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.expandTable', TRUE) : $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.collapseTable', TRUE)) . '">' .
+					$collapseIcon = '<a class="collapse_click_menu" href="#" data-collapse="' . $table . ',' . ($tableCollapsed ? '0' : '1') . '" title="' . ($tableCollapsed ? $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.expandTable', TRUE) : $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.collapseTable', TRUE)) . '">' .
 							($tableCollapsed ? t3lib_iconWorks::getSpriteIcon('actions-view-list-expand', array('class' => 'collapseIcon')) : t3lib_iconWorks::getSpriteIcon('actions-view-list-collapse', array('class' => 'collapseIcon'))) .
 						'</a>';
 				}				
 				//relative path for dynamic column icon
 				$dIcon = $this->dIcon($id, $table); 				
-				//debug ($theData, 'Output of variable',__FUNCTION__, __LINE__, __FILE__);
-				$out .= $this->addElement(1, $collapseIcon, $theData, ' class="t3-row-header"', '', '', $dIcon);
-			}
 
+				$out .=  $this->addElement(1, $collapseIcon, $theData, ' class="t3-row-header"', '', '', $dIcon);
+				$out = '<thead>'. $out .'</thead>';
+
+			}
+			
 			// Render table rows only if in multi table view and not collapsed or if in single table view
-			if (!$listOnlyInSingleTableMode && (!$tableCollapsed || $this->table)) {
-					// Fixing a order table for sortby tables
+			//if (!$listOnlyInSingleTableMode && (!$tableCollapsed || $this->table)) {
+			if (!$listOnlyInSingleTableMode || ($this->table)) {				
+				// Fixing a order table for sortby tables
 				$this->currentTable = array();
 				$currentIdList = array();
 				$doSort = ($TCA[$table]['ctrl']['sortby'] && !$this->sortField);
@@ -238,7 +349,7 @@ class ux_localRecordList extends  localRecordList {
 				$prevUid = 0;
 				$prevPrevUid = 0;
 
-					// Get first two rows and initialize prevPrevUid and prevUid if on page > 1
+				// Get first two rows and initialize prevPrevUid and prevUid if on page > 1
 				if ($this->firstElementNumber > 2 && $this->iLimit > 0) {
 					$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
 					$prevPrevUid = -(int) $row['uid'];
@@ -248,7 +359,6 @@ class ux_localRecordList extends  localRecordList {
 
 				$accRows = array();	// Accumulate rows here
 				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
-
 						// In offline workspace, look for alternative record:
 					t3lib_BEfunc::workspaceOL($table, $row, $GLOBALS['BE_USER']->workspace, TRUE);
 
@@ -281,13 +391,13 @@ class ux_localRecordList extends  localRecordList {
 				$iOut = '';
 				$cc = 0;
 
-				foreach($accRows as $row)	{
-					// Render item row if counter < limit
+				foreach($accRows as $row)	{					
+					// Render item row if counter < limit									
 					if ($cc < $this->iLimit) {
 						$cc++;
 						$this->translations = FALSE;
 						$iOut.= $this->renderListRow($table,$row,$cc,$titleCol,$thumbsCol);
-
+						
 							// If localization view is enabled it means that the selected records are either default or All language and here we will not select translations which point to the main record:
 						if ($this->localizationView && $l10nEnabled)	{
 								// For each available translation, render the record:
@@ -311,8 +421,7 @@ class ux_localRecordList extends  localRecordList {
 
 						// Counter of total rows incremented:
 					$this->eCounter++;
-				}
-
+				}					
 					// Record navigation is added to the beginning and end of the table if in single table mode
 				if ($this->table) {
 					$pageNavigation = $this->renderListNavigation();
@@ -332,20 +441,22 @@ class ux_localRecordList extends  localRecordList {
 				}
 
 					// The header row for the table is now created:
-				$out .= $this->renderListHeader($table,$currentIdList);
+				$out_header = $this->renderListHeader($table,$currentIdList);
 			}
-
-				// The list of records is added after the header:
+			//hide the 
+			if($tableCollapsed && !$this->table)  $tbody_attr =  ' style="display: none"';
+			//combind the list of records header and content to <tbody> dom element
+			$iOut = '<tbody'.$tbody_attr.'>'.$out_header. $iOut.'</tbody>';
+			// The list of records is added after the header:
 			$out .= $iOut;
 			unset($iOut);
+			unset($out_header);
 			// ... and it is all wrapped in a table:
 			$out='
 			<!--
 				DB listing of elements:	"'.htmlspecialchars($table).'"
 			-->
-				<table border="0" cellpadding="0" cellspacing="0" class="typo3-dblist'.($listOnlyInSingleTableMode?' typo3-dblist-overview':'').'">
-					'.$out.'
-				</table>';
+				<table border="0" cellpadding="0" cellspacing="0" class="typo3-dblist'.($listOnlyInSingleTableMode?' typo3-dblist-overview':'').'">'.$out.'</table>';
 
 			// Output csv if...
 			if ($this->csvOutput)	$this->outputCSV($table);	// This ends the page with exit.
