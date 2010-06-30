@@ -69,7 +69,7 @@ class tx_nsdynamicc_collapse {
 		}
 		//return the success message and collapse title with LG
 		//$tableCollapsed = (!$this->tablesCollapsed[$collapseOverride]) ? false : true;
-		echo 'sameera';
+		echo 'done';
 	}
 
 }

@@ -93,6 +93,7 @@ var CollapseClass = Class.create({
 				this.obj = '';
 				this.collapsed = '';
 				this.table	= '';
+				this.recordName = '';
 		//get the click object 
 		var collapseIcon = $$('table.typo3-dblist thead td.col-icon a'); 
 		collapseIcon.each(function(Element){
@@ -103,8 +104,12 @@ var CollapseClass = Class.create({
 						var getData = this.obj.up().readAttribute("data-collapse");
 								
 						var getDataObject = getData.split(",");
+						
 								this.table	= 'collapse['+ getDataObject[0] + ']';
+								//assign the data values as variables
+								this.recordName = getDataObject[0]; 
 								this.collapsed =	getDataObject[1];
+								
 								
 				var getGroups = new Ajax.Request('ajax.php', {
 						method: 'get',
@@ -135,7 +140,7 @@ var CollapseClass = Class.create({
 		},
 		
 		resetTableClickData: function(collapseOption){
-				data = this.table+','+collapseOption;
+				data = this.recordName+','+collapseOption;
 				this.obj.up().writeAttribute("data-collapse",data);
 		}
 });
