@@ -72,21 +72,24 @@ class tx_nsdynamicc_display {
 	function fieldSelectBox($id,$table,$formFields=1)	{
 		global $TCA, $LANG;
 		
-		// Initialize the dblist object:
+		//Initialize the dblist object:
 		$dblist = t3lib_div::makeInstance('localRecordList');
-		// Init:
+		//Init:
 		t3lib_div::loadTCA($table);
 		$formElements=array('','');
 		if ($formFields)	{
 			$formElements=array('<form action="'.htmlspecialchars($dblist->listURL($id,$table)).'" method="post">','</form>');
 		}
-
+		
+		$dblist_test = t3lib_div::makeInstance('ux_localRecordList');
+		$dblist_test->setDispFields();
+				
 		// Load already selected fields, if any:			
-		$setFields=is_array($dblist->setFields[$table]) ? $dblist->setFields[$table] : array();
+		$setFields=is_array($dblist_test->setFields[$table]) ? $dblist_test->setFields[$table] : array();
 		
 		// Request fields from table:
 		$fields = $dblist->makeFieldList($table, false, true);
-
+		
 		// Add pseudo "control" fields
 		$fields[]='_PATH_';
 		$fields[]='_REF_';
@@ -100,7 +103,7 @@ class tx_nsdynamicc_display {
 		foreach($fields as $fN)	{
 			$fL = is_array($TCA[$table]['columns'][$fN]) ? rtrim($LANG->sL($TCA[$table]['columns'][$fN]['label']),':') : '['.$fN.']';	// Field label
 			
-			$opt[] = '<div><input type="checkbox" id="dc_'.$fN.'" name="displayFields['.$table.'][]" value="'.$fN.'"'.(in_array($fN,$setFields)?' selected="yes"':'').' /><label for="dc_'.$fN.'">'.htmlspecialchars($fL).'</label></div>';
+			$opt[] = '<div><input type="checkbox" id="dc_'.$fN.'" name="displayFields['.$table.'][]" value="'.$fN.'"'.(in_array($fN,$setFields)?' checked="yes"':'').' /><label for="dc_'.$fN.'">'.htmlspecialchars($fL).'</label></div>';
 		}
 
 			// Compile the options into a multiple selector box:

@@ -14,6 +14,7 @@
 // ***************************
 class ux_localRecordList extends  localRecordList {
 	
+	var $setFields=array();				// Fields to display for the current table
 	/**
 	 * Initializes the list generation
 	 *
@@ -41,7 +42,7 @@ class ux_localRecordList extends  localRecordList {
 		$this->csvOutput = t3lib_div::_GP('csv') ? TRUE : FALSE;
 		$this->sortField = t3lib_div::_GP('sortField');
 		$this->sortRev = t3lib_div::_GP('sortRev');
-		$this->displayFields = t3lib_div::_GP('displayFields');		
+		$this->displayFields = t3lib_div::_GP('displayFields');				
 		$this->duplicateField = t3lib_div::_GP('duplicateField');
 
 		if (t3lib_div::_GP('justLocalized'))	{
@@ -113,6 +114,27 @@ class ux_localRecordList extends  localRecordList {
 		}
 	}
 	
+		/**
+	 * Setting the field names to display in extended list.
+	 * Sets the internal variable $this->setFields
+	 *
+	 * @return	void
+	 */
+	function setDispFields()	{
+
+			// Getting from session:
+		$dispFields = $GLOBALS['BE_USER']->getModuleData('db_list.php/displayFields');
+				
+			// If fields has been inputted, then set those as the value and push it to session variable:
+		if (is_array($this->displayFields))	{
+			reset($this->displayFields);
+			$tKey = key($this->displayFields);
+			$dispFields[$tKey]=$this->displayFields[$tKey];
+			$GLOBALS['BE_USER']->pushModuleData('db_list.php/displayFields',$dispFields);
+		}		
+			// Setting result:
+		$this->setFields=$dispFields;		
+	}
 	
 		/**
 	 * Creates the listing of records from a single table
@@ -125,7 +147,7 @@ class ux_localRecordList extends  localRecordList {
 	function getTable($table,$id,$rowlist)	{		
 		
 		global $TCA, $TYPO3_CONF_VARS;
-
+		
 		// Loading all TCA details for this table:
 		t3lib_div::loadTCA($table);
 
@@ -456,7 +478,7 @@ class ux_localRecordList extends  localRecordList {
 			<!--
 				DB listing of elements:	"'.htmlspecialchars($table).'"
 			-->
-				<table border="0" cellpadding="0" cellspacing="0" class="typo3-dblist'.($listOnlyInSingleTableMode?' typo3-dblist-overview':'').'">'.$out.'</table>';
+				<table border="0" cellpadding="0" cellspacing="0" id="typo3_'.$table.'" class="typo3-dblist'.($listOnlyInSingleTableMode?' typo3-dblist-overview':'').'">'.$out.'</table>';
 
 			// Output csv if...
 			if ($this->csvOutput)	$this->outputCSV($table);	// This ends the page with exit.
