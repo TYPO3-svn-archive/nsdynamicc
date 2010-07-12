@@ -21,10 +21,17 @@ class ux_SC_db_list extends  SC_db_list {
 		$this->doc = t3lib_div::makeInstance('template');
 		$this->doc->backPath = $BACK_PATH;
 		$this->doc->setModuleTemplate('templates/db_list.html');
+		//path to Nuwan extention
+		$path_dc = t3lib_extMgm::extRelPath("nsdynamicc");		
+
 		//add custom CSS files
 		$this->doc->addStyleSheet('tx_nsdynamicc', t3lib_extMgm::extRelPath('nsdynamicc').'res/column_styles.css');
-		//Get the path to js script by Nuwan
-		$path_dc = t3lib_extMgm::extRelPath("nsdynamicc");		
+
+			//load the extJS javascript fremwork by Nuwan		
+		$this->doc->getPageRenderer()->loadExtJS();		
+		//load the sortable js files in extenstion
+		$this->content .= $this->doc->loadJavascriptLib($path_dc.'scripts/sortable.js');	
+		//Get the path to js script by Nuwan		
 		$this->content .= $this->doc->loadJavascriptLib($path_dc.'scripts/dynamic_column.js');
 		
 		// Loading current page record and checking access:
@@ -168,7 +175,7 @@ class ux_SC_db_list extends  SC_db_list {
 					return list ? list : idList;
 				}
 
-				if (top.fsMod) top.fsMod.recentIds["web"] = '.intval($this->id).';
+				if (top.fsMod) top.fsMod.recentIds["web"] = '.intval($this->id).';						
 			');
 
 				// Setting up the context sensitive menu:

@@ -468,7 +468,7 @@ class ux_localRecordList extends  localRecordList {
 			//hide the 
 			if($tableCollapsed && !$this->table)  $tbody_attr =  ' style="display: none"';
 			//combind the list of records header and content to <tbody> dom element
-			$iOut = '<tbody'.$tbody_attr.'>'.$out_header. $iOut.'</tbody>';
+			$iOut = '<tbody'.$tbody_attr.' id="typo3_'.$table.'">'.$out_header. $iOut.'</tbody>';
 			// The list of records is added after the header:
 			$out .= $iOut;
 			unset($iOut);
@@ -478,7 +478,7 @@ class ux_localRecordList extends  localRecordList {
 			<!--
 				DB listing of elements:	"'.htmlspecialchars($table).'"
 			-->
-				<table border="0" cellpadding="0" cellspacing="0" id="typo3_'.$table.'" class="typo3-dblist'.($listOnlyInSingleTableMode?' typo3-dblist-overview':'').'">'.$out.'</table>';
+				<table border="0" cellpadding="0" cellspacing="0" class="typo3-dblist'.($listOnlyInSingleTableMode?' typo3-dblist-overview':'').'">'.$out.'</table>';
 
 			// Output csv if...
 			if ($this->csvOutput)	$this->outputCSV($table);	// This ends the page with exit.
@@ -490,13 +490,18 @@ class ux_localRecordList extends  localRecordList {
 
 
 	//addElement method overwrite here and 	
-	function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = '', $dcolumn =''){
-
+	function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = '', $dcolumn ='', $moveId=''){
+		
 	$noWrap = ($this->no_noWrap) ? '' : ' nowrap="nowrap"';
 	// Start up:
 	$out='
 	<!-- Element, begin: -->
 	<tr '.$trParams.'>';
+	//if move icon is true
+	if($moveId !='') {
+	$move_icon_dpath = t3lib_extMgm::extRelPath("nsdynamicc").'icon/move_row.png';
+	$out .= '<td class="handle" id="handle_sort_'.$moveId.'"><img  src="'.$move_icon_dpath.'" alt="Move" /></td>';
+	}
 		// Show icon and lines
 	if ($this->showIcon)	{
 		$out.='

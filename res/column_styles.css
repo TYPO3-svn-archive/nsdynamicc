@@ -2,3 +2,6 @@ div#contentselectbox { background-color: #FFF; position: absolute; z-index: 30; 
 div#contentselectbox label { margin:0; padding:0 0 0 5px; position:relative; top:-3px; font-size: 10px; cursor: pointer; }
 div.selector-container { padding: 5px; overflow-x: hidden; height: 280px; }
 div.selector-submit-button { margin-top: 5px; padding: 5px ; display: block; border-top: 1px solid #EAEAEA; }
+
+/* handle move styles */
+td.handle { padding: 0 5px; cursor: move; }
