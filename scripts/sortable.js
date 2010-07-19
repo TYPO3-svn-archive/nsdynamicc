@@ -521,6 +521,7 @@ Ext.dd.DragDropMgr._remove = function(oDD) {
 				sortable[getId] = new Ext.ux.Sortable({
 						container : getId,						
 						handles : true,
+						horizontal : true,
 						tagName: 'tr',
 						dragGroups : [
 										'sideways'+getId

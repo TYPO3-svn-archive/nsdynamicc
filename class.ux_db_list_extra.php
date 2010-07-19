@@ -122,10 +122,10 @@ class ux_localRecordList extends  localRecordList {
 	 */
 	function setDispFields()	{
 
-			// Getting from session:
+		// Getting from session:
 		$dispFields = $GLOBALS['BE_USER']->getModuleData('db_list.php/displayFields');
-				
-			// If fields has been inputted, then set those as the value and push it to session variable:
+		
+		// If fields has been inputted, then set those as the value and push it to session variable:
 		if (is_array($this->displayFields))	{
 			reset($this->displayFields);
 			$tKey = key($this->displayFields);
@@ -144,7 +144,7 @@ class ux_localRecordList extends  localRecordList {
 	 * @param	string		List of fields to show in the listing. Pseudo fields will be added including the record header.
 	 * @return	string		HTML table with the listing for the record.
 	 */
-	function getTable($table,$id,$rowlist)	{		
+	function getTable($table,$id,$rowlist)	{
 		
 		global $TCA, $TYPO3_CONF_VARS;
 		
@@ -194,8 +194,7 @@ class ux_localRecordList extends  localRecordList {
 				'.$TCA[$table]['ctrl']['transOrigPointerField'].' = 0
 			)';
 		}		
-		//sameera added
-		//$this->fieldArray[]='_DCOLUMN_';						
+						
 			// Cleaning up:
 		$this->fieldArray=array_unique(array_merge($this->fieldArray,t3lib_div::trimExplode(',',$rowlist,1)));
 		if ($this->noControlPanels)	{
@@ -325,7 +324,7 @@ class ux_localRecordList extends  localRecordList {
 				$theData[$titleCol] = $this->linkWrapTable($table, '<span class="c-table">' . $GLOBALS['LANG']->sL($TCA[$table]['ctrl']['title'], TRUE) . '</span> (' . $this->totalItems . ') ' . 	($this->table ? t3lib_iconWorks::getSpriteIcon('actions-view-table-collapse', array('title' => $GLOBALS['LANG']->getLL('contractView', TRUE))) : t3lib_iconWorks::getSpriteIcon('actions-view-table-expand', array('title' => $GLOBALS['LANG']->getLL('expandView', TRUE)))));			
 			}
 
-				// CSH:
+				// CSH:				
 			$theData[$titleCol].= t3lib_BEfunc::cshItem($table,'',$this->backPath,'',FALSE,'margin-bottom:0px; white-space: normal;');
 
 			if ($listOnlyInSingleTableMode)	{
@@ -489,23 +488,25 @@ class ux_localRecordList extends  localRecordList {
 	
 
 
-	//addElement method overwrite here and 	
-	function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = '', $dcolumn ='', $moveId=''){
+//addElement method overwrite here and 	
+function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = '', $dcolumn ='', $moveId=''){
 		
 	$noWrap = ($this->no_noWrap) ? '' : ' nowrap="nowrap"';
 	// Start up:
 	$out='
 	<!-- Element, begin: -->
 	<tr '.$trParams.'>';
+
 	//if move icon is true
 	if($moveId !='') {
-	$move_icon_dpath = t3lib_extMgm::extRelPath("nsdynamicc").'icon/move_row.png';
-	$out .= '<td class="handle" id="handle_sort_'.$moveId.'"><img  src="'.$move_icon_dpath.'" alt="Move" /></td>';
+		$move_icon_dpath = t3lib_extMgm::extRelPath("nsdynamicc").'icon/move_row.png';		
+		$move_icon = '<span><img class="handle" id="handle_sort_'.$moveId.'" src="'.$move_icon_dpath.'" alt="Move" /></span>';
+		$icon = $move_icon.$icon;
 	}
 		// Show icon and lines
 	if ($this->showIcon)	{
 		$out.='
-		<td nowrap="nowrap" class="col-icon">';
+		<td nowrap="nowrap" class="col-icon here">';
 
 		if (!$h)	{			
 			$out.='<img src="clear.gif" width="1" height="8" alt="" />';
@@ -528,7 +529,7 @@ class ux_localRecordList extends  localRecordList {
 	$ccount=0;
  				 	
 	// Traverse field array which contains the data to present:			
-	foreach ($this->fieldArray as $vKey) {			
+	foreach ($this->fieldArray as $vKey) {
 		if (isset($data[$vKey]))	{
 			if ($lastKey)	{
 				$cssClass = $this->addElement_tdCssClass[$lastKey];
@@ -584,7 +585,7 @@ class ux_localRecordList extends  localRecordList {
 	 * @param	 integer		Page id
 	 * @return string		dynamic column icon HTML
 	 */
-	function dIcon($id,$table)	{
+	function dIcon($id,$table){
 		//get the path of dynamic column icon
 		$dpath = t3lib_extMgm::extRelPath("nsdynamicc").'icon/icon-column.png';
 		$dHTML = '<a class="dcolumn" data-dinfo="'.$id.','.$table.'" href="#"><img  src="'.$dpath.'" alt="dcolumn" /></a>';
@@ -597,10 +598,6 @@ class ux_localRecordList extends  localRecordList {
 	
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/nsdynamicc/class.ux_db_list_extra.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/nsdynamicc/class.ux_db_list_extra.php']);
-}	
-// Make instance:
-/*$SOBE = t3lib_div::makeInstance('dynamic_column');
-$SOBE->main();
-$SOBE->printContent();*/
+}
 
 ?>

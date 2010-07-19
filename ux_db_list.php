@@ -16,7 +16,7 @@ class ux_SC_db_list extends  SC_db_list {
 	function main()    
 	{            
 		global $BE_USER,$LANG,$BACK_PATH,$CLIENT;
-
+		
 			// Start document template object:
 		$this->doc = t3lib_div::makeInstance('template');
 		$this->doc->backPath = $BACK_PATH;
