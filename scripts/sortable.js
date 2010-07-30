@@ -62,23 +62,22 @@ Ext.extend(Ext.ux.Sortable,Ext.util.Observable, {
 	 * @private
 	 */
 	_buildQueryString : function(){
-		this.queryString = '';
+		this.queryString = '';		
 		
 		if(this.tagName){
-			this.queryString += this.tagName.toLowerCase();
-		}
-		
+			this.queryString += this.tagName.toLowerCase();			
+		}		
 		if(this.className){
-			this.queryString += '.'+this.className;
+			this.queryString += '.'+this.className;			
 		}
 	},
 	/**
 	 * creates the DragZone and DropTarget
 	 * @private
 	 */
-	_createDragDrop : function(){			
-		 this.dragZone = new Ext.dd.SortableDragZone(this.container, {parentClass : this, ddGroup : this.dragGroups[0], scroll:false, containerScroll:true, queryString : this.queryString, handles : this.handles, queryDepth : this.queryDepth});
-	     this.dropZone = new Ext.dd.SortableDropZone(this.container, {parentClass : this, ddGroup : this.dragGroups[0], queryString : this.queryString, handles : this.handles, horizontal : this.horizontal});
+	_createDragDrop : function(){		
+		  this.dragZone = new Ext.dd.SortableDragZone(this.container, {parentClass : this, ddGroup : this.dragGroups[0], scroll:false, containerScroll:true, queryString : this.queryString, handles : this.handles, queryDepth : this.queryDepth});
+	    this.dropZone = new Ext.dd.SortableDropZone(this.container, {parentClass : this, ddGroup : this.dragGroups[0], queryString : this.queryString, handles : this.handles, horizontal : this.horizontal});			
 	},
 	/**
 	 * Function gets the items in the list area
@@ -121,7 +120,7 @@ Ext.extend(Ext.ux.Sortable,Ext.util.Observable, {
 	       	   --i;
 		   }
 		} else if (this.handles) {
-			while(i >= 0){
+			while(i >= 0){				
 				Ext.dd.Registry.register(this.drags[i], {
 		                   isHandle:false,
 		                   handles : [
@@ -129,7 +128,7 @@ Ext.extend(Ext.ux.Sortable,Ext.util.Observable, {
 		                   ],
 							ddGroups : this.ddGroups    
 		               }
-		           );
+		           ); 
 				--i;
 			}
 		} else if(this.contextMenu){
@@ -250,16 +249,16 @@ Ext.extend(Ext.ux.Sortable,Ext.util.Observable, {
 	 * @public
 	 * @param {String/Array} DD group(s) you want to add your list to
 	 */
-	addToDDGroup : function(groupName,enable){
+	addToDDGroup : function(groupName,enable){	
 		if(typeof groupName != 'string'){
 			var i = groupName.length-1;
-			while(i>=0){
+			while(i>=0){				
 				this.ddGroups[groupName[i]]=true;
 				this.dragZone.addToGroup(groupName[i]);
 				this.dropZone.addToGroup(groupName[i]);
 				--i;
 			}
-		} else {
+		} else {			
 			this.ddGroups[groupName]=true;	
 			this.dragZone.addToGroup(groupName);
 			this.dropZone.addToGroup(groupName);
@@ -295,18 +294,19 @@ Ext.extend(Ext.ux.Sortable,Ext.util.Observable, {
 
 
 Ext.dd.SortableDragZone = function(el, config){		
-	Ext.dd.DragZone.superclass.constructor.call(this, el, config);
+	Ext.dd.DragZone.superclass.constructor.call(this, el, config);	
 };
 
 Ext.extend(Ext.dd.SortableDragZone, Ext.dd.DragZone, {
 
 	getDragData : function(e){		
 		return this.getHandleFromEvent(e,this.queryString);
-    },
+  },
 	
 	onInitDrag : function(x, y){
-		var dragged = this.dragData.ddel.cloneNode(true);
-		dragged.id='';
+		//var dragged = this.dragData.ddel.cloneNode(true);
+
+		//dragged.id='';
 
 		if(Ext.isIE){ //IE fix for checkbox and radio
 			var array_cb = Ext.fly(this.dragData.ddel).select('input[type="checkbox"]');
@@ -322,31 +322,35 @@ Ext.extend(Ext.dd.SortableDragZone, Ext.dd.DragZone, {
 				i++;
 			});
 		}
-
-		this.proxy.update(dragged);
+		//move status change		
 		this.onStartDrag(x, y);
-		this.dragData.ddel.style.visibility='hidden';
+		this.dragData.ddel.style.opacity='0.5';
 		
 		this.parentClass.fireEvent('initSortable',this);
 		
 		return true;
 	},
- 
-    afterRepair : function(){               
+	
+	//hide the moues triggered clone element
+	alignElWithMouse: function(){
+		return false;
+	},
+  
+	afterRepair : function(){               
         this.dragData.ddel.style.visibility='';
         this.dragging = false;
 		this.parentClass.fireEvent('afterRepair',this);
     },
    
-    getRepairXY : function(e){
+  getRepairXY : function(e){
         //uncomment this to show animation
-        return Ext.Element.fly(this.dragData.ddel).getXY(); 
+        return Ext.Element.fly(this.dragData.ddel).getY(); 
     },
   
-    getNodeData : function(e){
+  getNodeData : function(e){			
         e = Ext.EventObject.setEvent(e);
         var target = e.getTarget(this.queryString);		
-		if(target){
+		if(target){			
             this.dragData.ddel = target.parentNode;
             this.dragData.single = true;
             return this.dragData;
@@ -355,11 +359,11 @@ Ext.extend(Ext.dd.SortableDragZone, Ext.dd.DragZone, {
     },
     
 	onEndDrag : function(data, e){ 
-		this.parentClass.fireEvent('endDrag',data, e);
+		this.parentClass.fireEvent('endDrag',data, e);		
 	},
 	
 	getHandleFromEvent : function(e,qs){		
-		if(this.handles){		
+		if(this.handles){			
 			return Ext.dd.Registry.getHandleFromEvent(e);	
 		} else {
 			var t = e.getTarget(qs,this.queryDepth);
@@ -374,7 +378,7 @@ Ext.dd.SortableDropZone = function(el, config){
 };
 
 Ext.extend(Ext.dd.SortableDropZone, Ext.dd.DropZone, {
-
+	
 	notifyEnter : function(source, e, data){
 		this.srcEl = Ext.get(data.ddel);
 		if(this._testDDGroup()){    
@@ -384,11 +388,11 @@ Ext.extend(Ext.dd.SortableDropZone, Ext.dd.DropZone, {
 		            if(!Ext.query(this.queryString,this.el).length > 0 && this.srcEl.is(this.queryString)){
 		                this.srcEl.appendTo(this.el);
 		            }
-		        }
+		        }						
 		        //add DD ok class to proxy            
 		        if(this.overClass){
 		            this.el.addClass(this.overClass);
-		        }
+		        }						
 				this.parentClass.fireEvent('notifyEnter', source, e, data);
 		        return this.dropAllowed;
 		    }    
@@ -407,16 +411,15 @@ Ext.extend(Ext.dd.SortableDropZone, Ext.dd.DropZone, {
 	    	var x;
    			
 		    var n = this.getTargetFromEvent(e);
-			
-		    if(!n){
-       
+				
+		    if(!n){					
 		        if(this.lastOverNode){
 		            this.onNodeOut(this.lastOverNode, dd, e, data);
 		            this.lastOverNode = null;
 		        }
 		        return this.onContainerOver(dd, e, data);
 		    }
-		    if(this.lastOverNode != n){
+		    if(this.lastOverNode != n){					
 		        if(this.lastOverNode){
 		            this.onNodeOut(this.lastOverNode, dd, e, data);
 		        }
@@ -459,7 +462,7 @@ Ext.extend(Ext.dd.SortableDropZone, Ext.dd.DropZone, {
 				});
 			}
 
-			if (this.goingPrevious) {
+			if (this.goingPrevious) {				
 				this.srcEl.insertBefore(destEl);
 			} else {
 				this.srcEl.insertAfter(destEl);
@@ -476,16 +479,17 @@ Ext.extend(Ext.dd.SortableDropZone, Ext.dd.DropZone, {
 	notifyDrop : function(dd, e, data){
 	    if(this._testDDGroup){    
 			if(this.srcEl !== null){
-		        this.srcEl.setStyle('visibility','');            
+		        this.srcEl.setStyle('opacity','1.0');            
 		        // refresh the drag drop manager
 		        Ext.dd.DragDropMgr.refreshCache(this.groupName);
+						//console.log(data);
 				this.parentClass.fireEvent('notifyDrop',dd, e, data);
 		    }
 			return true;
 		}    
 	},
-	_testDDGroup : function(){
-		var groupTest = Ext.dd.Registry.getTarget(this.srcEl.id).ddGroups;
+	_testDDGroup : function(){		
+		var groupTest = Ext.dd.Registry.getTarget(this.srcEl.id).ddGroups;		
 		var result = false;
 		
 		for(this.groups in groupTest){
@@ -512,21 +516,151 @@ Ext.dd.DragDropMgr._remove = function(oDD) {
 	}
 }
 
+
 //call the script and make available to grag & drop content dom
-  Ext.onReady(function() { 
-		var sortable = new Array();				
+  Ext.onReady(function() {		
+		var sortable = new Array();
+		
 		Ext.select('table.typo3-dblist tbody').each(function(el){
+			//get the temp array of row items on initSortable
+			var tempRowsInit 	= new Array();
+			var tempRowsEnd  	= new Array();
+			//get the dragzone container tablename
+			var tablename 		= Ext.get(el.id).getAttribute('data-tablename');
+			var vc 						= Ext.get(el.id).getAttribute('data-vc');
+			var previd 				= Ext.get(el.id).getAttribute('data-prev');
+			//current table item id
+			var currentTableID = el.id;			
+			
 				//get the ids				
 				getId = el.id;				
 				sortable[getId] = new Ext.ux.Sortable({
 						container : getId,						
 						handles : true,
+<<<<<<< .mine
+					  className : 'db_list_normal',
+=======
 						horizontal : true,
+>>>>>>> .r36167
 						tagName: 'tr',
 						dragGroups : [
 										'sideways'+getId
 						]	
 						//contextMenu : contextAlert
 				});
+				
+				//get the array of rows
+				sortable[getId].on('initSortable',function(){				
+					tempRowsInit = this.serialise();				
+				});				
+				
+				sortable[getId].on('endDrag',function(data,e){					
+					tempRowsEnd = this.serialise();
+					//get the dragged ID
+					draggedID = data.ddel.id; 					
+					//after Row itme EndDragged Client is going to change the moveemnt
+					movementSave(tempRowsInit, tempRowsEnd, draggedID, tablename, vc, previd, currentTableID); 					
+				});
+
+				//get serialise objects
+			
 		});
+		
+		/** movement functionality control by this function
+		 * @param {Array} the array of row organized before sort
+		 * @param {Array} the array of rwo organized after sort
+		 * @param {Integer} the dragged id
+		 * @param {String} the name of dragzone area
+		 * @returns return
+		 */		
+		var movementSave = function(tempRowsInit, tempRowsEnd, draggedID, tablename, vc, previd, currentTableID) {			
+      //get the initial row arrangemnts
+			var getTempRowTnit = _queryAttr(tempRowsInit);				
+			//get the dragged rows arrangements
+			var getTempTowEnd = _queryAttr(tempRowsEnd);				
+			//get the dragged dom data id
+			var draggedDataID =	Ext.get(draggedID).getAttribute('data-id');
+			
+			//get index for first arrangement
+			var initIid = parseInt(getTempRowTnit.indexOf(draggedDataID));
+			//get index of end arrangemnt
+			var endIid = parseInt(getTempTowEnd.indexOf(draggedDataID));
+			
+			//check whether going downward
+			if(endIid > initIid){
+				//downward configs
+				moveSign = '-';
+				//get the value form init-arrangement using end-Index
+				moveTo = getTempRowTnit[endIid];
+				moveTo = moveSign + moveTo;				
+				//execute ajax functionlity
+				var ajax = moveAjax(tablename, draggedDataID, moveTo, vc, currentTableID);  				
+			}
+			
+			//check whether movement is upward
+			else if( initIid > endIid){				
+				//upward means opposite action of downward
+				//get the row id of replaced by draggred one
+				upwardDid = parseInt(getTempTowEnd.indexOf(draggedDataID));
+				//create the move command
+				moveSign = '-';
+				
+				//if row dragged to the first possition to the container
+				//if not normaly dragging 
+				if(upwardDid == 0 && upwardDid != null){					
+					replaceTo = previd; 
+				}else{					
+					replaceTo = moveSign + getTempRowTnit[upwardDid-1];
+				}
+				//execute ajax functionality
+				var rajax = moveAjax(tablename, draggedDataID, replaceTo, vc, currentTableID)
+			}			
+    }
+		
+		
+	/* get the data attributes to the serialized array  
+	 * @param {array} the dom array with data attributes
+	 * @returns {ojbect} return attributes as an objects
+	 */
+		var _queryAttr = function(array){
+					var result = new Array();
+
+					Ext.each(array, function(data,index){				
+						var dataAttr =	Ext.get(data.id).getAttribute('data-id');
+						//if row dom don't have data-id attribute just ingore 
+						if(dataAttr){
+							result[index] = dataAttr;																		
+						}				
+					});				
+				return result; 
+		}
+	
+		/* Ajax request to handle move operation 
+		 * @param {string} the queries strings
+		 * @returns {boolen} movemnent successfully chaned at TYPO3 databas
+		 */
+		var moveAjax = function(tablename, id, moveTo, vc, currentTableID){	
+			//creae params cmd[tt_content][2][move]
+			var cmd = 'cmd['+tablename+']['+id+'][move]';				
+				//fire Ajax request to Class.tx_nsdynamicc_sort.php
+				//loading indicator
+				mask = new Ext.LoadMask(Ext.getBody(), {
+             msg: "Saving Arrangements..."
+         });
+				//show the mask				
+				mask.show();
+
+				Ext.Ajax.request({
+					url: 'ajax.php?ajaxID=tx_nsdynamicc::movementSort&'+cmd+'='+moveTo+'&prErr=1'+'&vC='+vc+'&uPT=1',					
+					timeout: 3000,
+					method: 'GET',
+					success: function(xhr) {
+						var obj = Ext.decode(xhr.responseText).response;
+						//if successfully the ajax request just hide the mask
+						if(obj){
+							mask.hide();
+						}
+					}
+				});
+		}
 	});

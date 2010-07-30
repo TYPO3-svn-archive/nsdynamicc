@@ -184,7 +184,7 @@ class ux_SC_db_list extends  SC_db_list {
 
 			// Begin to compile the whole page, starting out with page header:
 		$this->body='';
-		$this->body.= '<form action="'.htmlspecialchars($dblist->listURL()).'" method="post" name="dblistForm" class="sameera">';
+		$this->body.= '<form action="'.htmlspecialchars($dblist->listURL()).'" method="post" name="dblistForm">';
 		$this->body.= $dblist->HTMLcode;
 		$this->body.= '<input type="hidden" name="cmd_table" /><input type="hidden" name="cmd" /></form>';
 

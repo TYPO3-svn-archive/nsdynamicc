@@ -5,10 +5,8 @@
  * Dummy document - displays nothing but background color. *  
  ** @author    Nuwan Sameera <nuwan28@gmail.com> 
  * Revised for TYPO3 3.6 2/2003 by Kasper Skårhøj 
- * XHTML compliant content */
- 
-//require ('init.php');
-//require ('template.php');// ***************************
+ * XHTML compliant content
+ */
 
 // Script Classes
 // ***************************
@@ -83,7 +81,7 @@ class ux_localRecordList extends  localRecordList {
 		
 		
 		/**
-		 *remove this collapse table configurations setup to ajax functionality by sameera
+		 *remove this collapse table configurations setup to ajax functionality.. class.tx_nsdynamicc_collapse.php
 		 *
 		  $collapseOverride = t3lib_div::_GP('collapse');
 		if (is_array($collapseOverride)) {				
@@ -114,7 +112,7 @@ class ux_localRecordList extends  localRecordList {
 		}
 	}
 	
-		/**
+	/**
 	 * Setting the field names to display in extended list.
 	 * Sets the internal variable $this->setFields
 	 *
@@ -278,14 +276,15 @@ class ux_localRecordList extends  localRecordList {
 		} else {
 			$queryParts = $this->makeQueryArray($table, $id,$addWhere,$selFieldList);	// (API function from class.db_list.inc)
 		}
-
+		
+		
 		$this->setTotalItems($queryParts);		// Finding the total amount of records on the page (API function from class.db_list.inc)
 
 		// Init:
 		$dbCount = 0;
 		$out = '';
 		$listOnlyInSingleTableMode = $this->listOnlyInSingleTableMode && !$this->table;
-
+		
 		// If the count query returned any number of records, we perform the real query, selecting records.
 		if ($this->totalItems){
 			// Fetch records only if not in single table mode or if in multi table mode and not collapsed
@@ -359,48 +358,48 @@ class ux_localRecordList extends  localRecordList {
 
 			}
 			
-			// Render table rows only if in multi table view and not collapsed or if in single table view
-			//if (!$listOnlyInSingleTableMode && (!$tableCollapsed || $this->table)) {
+			// Render table rows only if in multi table view and not collapsed or if in single table view			
 			if (!$listOnlyInSingleTableMode || ($this->table)) {				
 				// Fixing a order table for sortby tables
 				$this->currentTable = array();
 				$currentIdList = array();
 				$doSort = ($TCA[$table]['ctrl']['sortby'] && !$this->sortField);
-
+					
 				$prevUid = 0;
 				$prevPrevUid = 0;
-
+					
 				// Get first two rows and initialize prevPrevUid and prevUid if on page > 1
-				if ($this->firstElementNumber > 2 && $this->iLimit > 0) {
+				if ($this->firstElementNumber > 2 && $this->iLimit > 0) {					
 					$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
 					$prevPrevUid = -(int) $row['uid'];
 					$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result);
 					$prevUid = $row['uid'];
 				}
-
-				$accRows = array();	// Accumulate rows here
+				
+				$accRows = array();	// Accumulate rows here				
 				while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($result))	{
 						// In offline workspace, look for alternative record:
-					t3lib_BEfunc::workspaceOL($table, $row, $GLOBALS['BE_USER']->workspace, TRUE);
 
+					t3lib_BEfunc::workspaceOL($table, $row, $GLOBALS['BE_USER']->workspace, TRUE);
+					
 					if (is_array($row))	{
 						$accRows[] = $row;
 						$currentIdList[] = $row['uid'];
-						if ($doSort)	{
-							if ($prevUid)	{
-								$this->currentTable['prev'][$row['uid']] = $prevPrevUid;
+						if ($doSort)	{							
+							if ($prevUid)	{								
+								$this->currentTable['prev'][$row['uid']] = $prevPrevUid;								
 								$this->currentTable['next'][$prevUid] = '-'.$row['uid'];
 								$this->currentTable['prevUid'][$row['uid']] = $prevUid;
 							}
 							$prevPrevUid = isset($this->currentTable['prev'][$row['uid']]) ? -$prevUid : $row['pid'];
-							$prevUid=$row['uid'];
+							$prevUid=$row['uid'];							
 						}
 					}
 				}
+				
 				$GLOBALS['TYPO3_DB']->sql_free_result($result);
 
-				$this->totalRowCount = count($accRows);
-
+				$this->totalRowCount = count($accRows);					
 					// CSV initiated
 				if ($this->csvOutput) $this->initCSV();
 
@@ -408,7 +407,7 @@ class ux_localRecordList extends  localRecordList {
 				$this->CBnames=array();
 				$this->duplicateStack=array();
 				$this->eCounter=$this->firstElementNumber;
-
+					
 				$iOut = '';
 				$cc = 0;
 
@@ -416,7 +415,7 @@ class ux_localRecordList extends  localRecordList {
 					// Render item row if counter < limit									
 					if ($cc < $this->iLimit) {
 						$cc++;
-						$this->translations = FALSE;
+						$this->translations = FALSE;						
 						$iOut.= $this->renderListRow($table,$row,$cc,$titleCol,$thumbsCol);
 						
 							// If localization view is enabled it means that the selected records are either default or All language and here we will not select translations which point to the main record:
@@ -433,16 +432,16 @@ class ux_localRecordList extends  localRecordList {
 									t3lib_BEfunc::workspaceOL($table, $lRow, $GLOBALS['BE_USER']->workspace, true);
 									if (is_array($lRow) && $GLOBALS['BE_USER']->checkLanguageAccess($lRow[$TCA[$table]['ctrl']['languageField']]))	{
 										$currentIdList[] = $lRow['uid'];
-										$iOut.=$this->renderListRow($table,$lRow,$cc,$titleCol,$thumbsCol,18);
+										$iOut.=$this->renderListRow($table,$lRow,$cc,$titleCol,$thumbsCol,18);										
 									}
 								}
 							}
 						}
 					}
-
 						// Counter of total rows incremented:
 					$this->eCounter++;
-				}					
+				}
+					
 					// Record navigation is added to the beginning and end of the table if in single table mode
 				if ($this->table) {
 					$pageNavigation = $this->renderListNavigation();
@@ -464,20 +463,22 @@ class ux_localRecordList extends  localRecordList {
 					// The header row for the table is now created:
 				$out_header = $this->renderListHeader($table,$currentIdList);
 			}
-			//hide the 
-			if($tableCollapsed && !$this->table)  $tbody_attr =  ' style="display: none"';
-			//combind the list of records header and content to <tbody> dom element
-			$iOut = '<tbody'.$tbody_attr.' id="typo3_'.$table.'">'.$out_header. $iOut.'</tbody>';
-			// The list of records is added after the header:
-			$out .= $iOut;
-			unset($iOut);
-			unset($out_header);
-			// ... and it is all wrapped in a table:
-			$out='
+			
+			//get the prev item id for sort to easy
+			list ($key1, $prevVal) = each($this->currentTable['prev']);
+						
+				//combind the list of records header and content to <tbody> dom element
+				$iOut = '<tbody'.(($tableCollapsed && !$this->table)? " style='display: none'": "").' id="typo3_'.$table.'" data-tablename ="'.$table.'" data-vc="'.rawurlencode($GLOBALS['BE_USER']->veriCode()).'" data-prev="'.(isset($prevVal)? $prevVal : '').'" >'.$out_header. $iOut.'</tbody>';
+				// The list of records is added after the header:
+				$out .= $iOut;
+					unset($iOut);
+					unset($out_header);
+				// ... and it is all wrapped in a table:
+				$out='
 			<!--
 				DB listing of elements:	"'.htmlspecialchars($table).'"
 			-->
-				<table border="0" cellpadding="0" cellspacing="0" class="typo3-dblist'.($listOnlyInSingleTableMode?' typo3-dblist-overview':'').'">'.$out.'</table>';
+				<table border="0" cellpadding="0" cellspacing="0" id="test'.$table.'" class="typo3-dblist'.($listOnlyInSingleTableMode?' typo3-dblist-overview':'').'">'.$out.'</table>';
 
 			// Output csv if...
 			if ($this->csvOutput)	$this->outputCSV($table);	// This ends the page with exit.
@@ -499,14 +500,24 @@ function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = 
 
 	//if move icon is true
 	if($moveId !='') {
+<<<<<<< .mine
+		$move_icon_dpath = t3lib_extMgm::extRelPath("nsdynamicc").'icon/move_row_new.png';		
+		$move_icon = '<span><img class="handle" id="handle_sort_'.$moveId.'" src="'.$move_icon_dpath.'" alt="Move" /></span>';
+		$icon = $move_icon.$icon;
+=======
 		$move_icon_dpath = t3lib_extMgm::extRelPath("nsdynamicc").'icon/move_row.png';		
 		$move_icon = '<span><img class="handle" id="handle_sort_'.$moveId.'" src="'.$move_icon_dpath.'" alt="Move" /></span>';
 		$icon = $move_icon.$icon;
+>>>>>>> .r36167
 	}
 		// Show icon and lines
 	if ($this->showIcon)	{
 		$out.='
+<<<<<<< .mine
+		<td nowrap="nowrap" class="col-icon move-icon">';
+=======
 		<td nowrap="nowrap" class="col-icon here">';
+>>>>>>> .r36167
 
 		if (!$h)	{			
 			$out.='<img src="clear.gif" width="1" height="8" alt="" />';
@@ -594,8 +605,8 @@ function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = 
 
 	
 }
+
 // Include extension?
-	
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/nsdynamicc/class.ux_db_list_extra.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/nsdynamicc/class.ux_db_list_extra.php']);
 }

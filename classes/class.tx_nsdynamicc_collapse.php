@@ -40,7 +40,7 @@ require_once ($BACK_PATH.'class.db_list_extra.inc');
  * @subpackage dbal
  */
 class tx_nsdynamicc_collapse {
-
+	var $collapseTitle; // the variable define to change collapse icon title to be changed by ajax
 /**
  * Ajax respons for Create the selector box for selecting fields to display from a table:
  * 
@@ -56,20 +56,18 @@ class tx_nsdynamicc_collapse {
 			foreach($collapseOverride as $collapseTable => $collapseValue) {
 				if (is_array($GLOBALS['TCA'][$collapseTable]) && ($collapseValue == 0 || $collapseValue == 1)) {
 					$this->tablesCollapsed[$collapseTable] = $collapseValue;
+								//set the collapse icon title description
+			$this->collapseTitle = ($collapseValue == 1) ? $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.expandTable', TRUE) : $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.collapseTable', TRUE); 
 				}
 			}
 			// Save modified user uc
 			$GLOBALS['BE_USER']->uc['moduleData']['db_list.php'] = $this->tablesCollapsed;
 			$GLOBALS['BE_USER']->writeUC($GLOBALS['BE_USER']->uc);
-			//I don't know just check for this
-			if (t3lib_div::_GP('returnUrl')) {
-				$location = t3lib_div::_GP('returnUrl');
-				t3lib_utility_Http::redirect($location);
-			}
+			
+			//success message
+			$ajaxObj->addContent('response',$this->collapseTitle);
+			$ajaxObj->setContentFormat('json');		
 		}
-		//return the success message and collapse title with LG
-		//$tableCollapsed = (!$this->tablesCollapsed[$collapseOverride]) ? false : true;
-		echo 'done';
 	}
 
 }
