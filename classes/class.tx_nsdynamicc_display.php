@@ -26,9 +26,9 @@
 ***************************************************************/
 
 // TODO remove the include once the autoloader is in place
-unset($MCONF);
-require_once ($BACK_PATH.'class.db_list.inc');
-require_once ($BACK_PATH.'class.db_list_extra.inc');
+//unset($MCONF);
+//require_once ($BACK_PATH.'class.db_list.inc');
+//require_once ($BACK_PATH.'class.db_list_extra.inc');
 //$BE_USER->modAccess($MCONF,1);
 /**
  * Class that renders fields for the Extension Manager configuration.
@@ -40,11 +40,22 @@ require_once ($BACK_PATH.'class.db_list_extra.inc');
  * @subpackage dbal
  */
 class tx_nsdynamicc_display {
-
-/**
- * Ajax respons for Create the selector box for selecting fields to display from a table:
- * 
- */
+	
+	/**
+	 * Add dynamic_column.js file to the extenstion
+	 * 	
+	 */
+	public function preStartPageHook($parameters, $pObj) {
+		//insert javascript file and css in  to the document header
+		$pObj->getPageRenderer()->loadExtJS();		
+		$pObj->addStyleSheet('tx_nsdynamicc', t3lib_extMgm::extRelPath('nsdynamicc').'res/column_styles.css');
+		$pObj->loadJavascriptLib(t3lib_extMgm::extRelPath("nsdynamicc").'scripts/dynamic_column.js');		
+	}
+	
+	/**
+	 * Ajax respons for Create the selector box for selecting fields to display from a table:
+	 * 
+   */
 	function createAjaxSelector(array $params, TYPO3AJAX $ajaxObj){
 		global $TCA, $LANG;		
     // get the params 		

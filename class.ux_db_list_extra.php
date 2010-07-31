@@ -499,25 +499,15 @@ function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = 
 	<tr '.$trParams.'>';
 
 	//if move icon is true
-	if($moveId !='') {
-<<<<<<< .mine
+	if($moveId !='' && !$this->sortField && !$this->searchLevels) {
 		$move_icon_dpath = t3lib_extMgm::extRelPath("nsdynamicc").'icon/move_row_new.png';		
 		$move_icon = '<span><img class="handle" id="handle_sort_'.$moveId.'" src="'.$move_icon_dpath.'" alt="Move" /></span>';
 		$icon = $move_icon.$icon;
-=======
-		$move_icon_dpath = t3lib_extMgm::extRelPath("nsdynamicc").'icon/move_row.png';		
-		$move_icon = '<span><img class="handle" id="handle_sort_'.$moveId.'" src="'.$move_icon_dpath.'" alt="Move" /></span>';
-		$icon = $move_icon.$icon;
->>>>>>> .r36167
 	}
 		// Show icon and lines
 	if ($this->showIcon)	{
 		$out.='
-<<<<<<< .mine
 		<td nowrap="nowrap" class="col-icon move-icon">';
-=======
-		<td nowrap="nowrap" class="col-icon here">';
->>>>>>> .r36167
 
 		if (!$h)	{			
 			$out.='<img src="clear.gif" width="1" height="8" alt="" />';
@@ -605,8 +595,8 @@ function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = 
 
 	
 }
-
 // Include extension?
+	
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/nsdynamicc/class.ux_db_list_extra.php']) {
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/nsdynamicc/class.ux_db_list_extra.php']);
 }

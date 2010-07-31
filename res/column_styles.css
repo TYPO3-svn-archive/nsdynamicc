@@ -4,18 +4,8 @@ div.selector-container { padding: 5px; overflow-x: hidden; height: 280px; }
 div.selector-submit-button { margin-top: 5px; padding: 5px ; display: block; border-top: 1px solid #EAEAEA; }
 
 /* handle move styles */
-<<<<<<< .mine
 img.handle { padding:2px 7px 2px 5px; cursor: move; }
 table.typo3-dblist tr td.move-icon { padding-top: 0; padding-bottom: 0;  }
 /* help tips styles */
 .x-tip .x-tip-header-text { padding: 5px 5px 0 5px; display: block; }
 .x-tip .x-tip-body { padding: 5px; display: block; }
-
-/* remove hover effect form styels */
-=======
-img.handle { padding: 0 5px; }
-
-/* help tips styles */
-.x-tip .x-tip-header-text { padding: 5px 5px 0 5px; display: block; }
-.x-tip .x-tip-body { padding: 5px; display: block; }
->>>>>>> .r36167

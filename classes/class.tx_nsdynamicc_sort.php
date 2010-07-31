@@ -43,6 +43,14 @@ class tx_nsdynamicc_sort implements localRecordList_actionsHook {
 		var $uPT;			// Boolean. Update Page Tree Trigger. If set and the manipulated records are pages then the update page tree signal will be set.
 		
 	/**
+	 * Add sortable.js files to the extenstion
+	 * 	
+	 */
+	public function preStartPageHook($parameters, $pObj) {
+		//insert javascript code in document header
+		$pObj->loadJavascriptLib(t3lib_extMgm::extRelPath("nsdynamicc").'scripts/sortable.js');
+	}
+	/**
 	 * Ajax functionality for movement of data table row items
 	 */
 	function movementSort(array $params, TYPO3AJAX $ajaxObj){
@@ -118,7 +126,8 @@ class tx_nsdynamicc_sort implements localRecordList_actionsHook {
 	public function makeControl($table, $row, $cells, &$parentObject){
 		global $TCA, $LANG, $SOBE, $TYPO3_CONF_VARS;
 		//here remove the moveUp and moveDown form control icon
-		unset($cells['moveUp'],$cells['moveDown']);				
+		unset($cells['moveUp'],$cells['moveDown']);
+		$cells['quick-edit'] = '<a class="quick-edit" href="#">Quick Edit</a>';
 		return $cells;
 	}
 	
