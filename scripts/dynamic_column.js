@@ -37,7 +37,7 @@ var DcolumnClass = Class.create({
 				//add the content to the bottom of the <body> tag				
 				var offset = this.obj.up().cumulativeOffset();						
 				//Add custom styles				
-				var container = '<div id="contentselectbox" style="display: block;top: '+offset[1]+'px; right: 45px">'+HTMLoutput+'</div>';
+				var container = '<div id="contentselectbox" style="display: block;top: '+(offset[1]+16)+'px; right: 31px">'+HTMLoutput+'</div>';
 				//select box wrapper container object
 				var selector = $('contentselectbox');
 

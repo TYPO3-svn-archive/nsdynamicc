@@ -92,7 +92,37 @@ Ext.onReady(function(){
             }
           });
             
-    });    
+    });
+    
+    //render disply information modle window for recor item
+     Ext.select('a.typo3-disply-info').on('click', function(e,traget){
+        e.stopEvent();
+        infoUrl = traget.up().href;
+        var headerInfo = 'View Item';
+        
+        var win = new  Ext.Window({
+          width: 400,
+          height: 400,
+          id:'autoload-infowin',                                  
+          autoScroll:true,                        
+          closeAction  : 'close',
+          bodyStyle: { padding: '0 10px' },
+          autoLoad:{
+              url: infoUrl
+          },
+          title: headerInfo,
+          listeners:{
+              'show': function() {
+                  this.loadMask = new Ext.LoadMask(this.body, {
+                      msg:'Loading. Please wait...'
+                  });
+                  //close the window ouside of the window
+              }           
+          }
+          
+       });
+        win.show();
+    });
                         
     Ext.QuickTips.init();   
 });

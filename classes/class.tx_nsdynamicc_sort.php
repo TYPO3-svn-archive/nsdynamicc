@@ -125,7 +125,7 @@ class tx_nsdynamicc_sort implements localRecordList_actionsHook {
 	 */ 
 	public function makeControl($table, $row, $cells, &$parentObject){
 		global $TCA, $LANG, $SOBE, $TYPO3_CONF_VARS;
-		//here remove the moveUp and moveDown form control icon
+		//here remove the moveUp and moveDown form control icon		
 		unset($cells['moveUp'],$cells['moveDown']);
 		$cells['quick-edit'] = '<a class="quick-edit" href="#">Quick Edit</a>';
 		return $cells;

@@ -146,6 +146,17 @@ class tx_nsdynamicc_helptips {
 		}
 	}
 	
+	
+	public function viewBigHook($table, $rowId, &$reference){
+		global $TCA, $LANG;
+		//debug($table);
+		//change Display information dialog box to Ext modle window
+		$viewBig = '<a href="show_item.php?table='.$table.'&uid='.$rowId.'" class="typo3-disply-info" title="'.$LANG->getLL('showInfo', TRUE).'">'.
+						t3lib_iconWorks::getSpriteIcon('actions-document-info') .
+					'</a>';
+		return $viewBig; 
+	}
+	
 }
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/nsdynamicc/classes/class.tx_nsdynamicc_helptips.php']) {

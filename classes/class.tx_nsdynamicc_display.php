@@ -27,8 +27,8 @@
 
 // TODO remove the include once the autoloader is in place
 //unset($MCONF);
-//require_once ($BACK_PATH.'class.db_list.inc');
-//require_once ($BACK_PATH.'class.db_list_extra.inc');
+require_once (PATH_typo3.'class.db_list.inc');
+require_once (PATH_typo3.'class.db_list_extra.inc');
 //$BE_USER->modAccess($MCONF,1);
 /**
  * Class that renders fields for the Extension Manager configuration.
@@ -85,11 +85,11 @@ class tx_nsdynamicc_display {
 		
 		//Initialize the dblist object:
 		$dblist = t3lib_div::makeInstance('localRecordList');
-		//Init:
-		t3lib_div::loadTCA($table);
+		//Init
+		//t3lib_div::loadTCA($table);
 		$formElements=array('','');
 		if ($formFields)	{
-			$formElements=array('<form action="'.htmlspecialchars($dblist->listURL($id,$table)).'" method="post">','</form>');
+			$formElements=array('<form action="'.htmlspecialchars($dblist->listURL($id,$table)).'&db_list.php?id='.$id.'&table=" method="post">','</form>');
 		}
 		
 		$dblist_test = t3lib_div::makeInstance('ux_localRecordList');
@@ -129,7 +129,7 @@ class tx_nsdynamicc_display {
 					Field selector for extended table view:
 				-->
 				<div class="selector-container">'.$lMenu.'</div>
-				<div class="selector-submit-button">
+				<div class="selector-submit-button">					
 					<input type="submit" name="search" value="'.$LANG->sL('LLL:EXT:lang/locallang_core.php:labels.setFields',1).'" />
 				</div>
 			'.$formElements[1];

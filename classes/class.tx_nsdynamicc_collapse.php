@@ -26,9 +26,8 @@
 ***************************************************************/
 
 // TODO remove the include once the autoloader is in place
-unset($MCONF);
-require_once ($BACK_PATH.'class.db_list.inc');
-require_once ($BACK_PATH.'class.db_list_extra.inc');
+//require_once ($BACK_PATH.'class.db_list.inc');
+//require_once ($BACK_PATH.'class.db_list_extra.inc');
 //$BE_USER->modAccess($MCONF,1);
 /**
  * Class that renders fields for the Extension Manager configuration.
