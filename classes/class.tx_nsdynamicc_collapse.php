@@ -65,7 +65,7 @@ class tx_nsdynamicc_collapse {
 			
 			//success message
 			$ajaxObj->addContent('response',$this->collapseTitle);
-			$ajaxObj->setContentFormat('json');		
+			//$ajaxObj->setContentFormat('json');		
 		}
 	}
 

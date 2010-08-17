@@ -123,16 +123,19 @@ var CollapseClass = Class.create({
 		},
 		//show or hide the record table 
 		showHideTable: function(xhr){
+        var HTMLoutput = xhr.responseText;
 				//to hide the record table
 				if(this.collapsed == 1){
 						this.obj.up('.typo3-dblist').down('tbody').hide();
 						this.obj.removeClassName("t3-icon-view-list-collapse").addClassName("t3-icon-view-list-expand");
+            this.obj.up().writeAttribute("title",HTMLoutput);
 						//reset the data in click object
 						this.resetTableClickData(0);				
 				}
 				if(this.collapsed == 0){
 						this.obj.up('.typo3-dblist').down('tbody').show();
 						this.obj.removeClassName("t3-icon-view-list-expand").addClassName("t3-icon-view-list-collapse");
+            this.obj.up().writeAttribute("title",HTMLoutput);
 						//reset the data in click object
 						this.resetTableClickData(1);
 				}
