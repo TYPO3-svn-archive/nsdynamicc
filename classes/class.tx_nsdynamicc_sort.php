@@ -131,6 +131,14 @@ class tx_nsdynamicc_sort implements localRecordList_actionsHook {
 		return $cells;
 	}
 	
+	/**
+	 * This Hook is used to add move icon to the row item 
+	 */
+	public function addMoveIconHook($table, $rowUid, &$reference){
+		//create move icon id for specific row item
+		$moveId = $table.'_'.$rowUid;
+		return $moveId; 
+	}
 }
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/nsdynamicc/classes/class.tx_nsdynamicc_sort.php']) {

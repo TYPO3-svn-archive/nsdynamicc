@@ -137,6 +137,13 @@ class tx_nsdynamicc_display {
 		return $content;
 	}
 	
+	/**
+	 * This Hook is used to remove FieldSelect box of record single table view
+	 */
+	public  function removeFieldSelectBox($content, &$reference){
+		unset($content);
+		return ; 
+	}
 }
 
 

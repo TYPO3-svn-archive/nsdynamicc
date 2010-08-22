@@ -1,15 +1,10 @@
 <?php
 
 /**  
+ * extends the localRecordList class for nsdynamicc backedn extension 
  * 
- * Dummy document - displays nothing but background color. *  
- ** @author    Nuwan Sameera <nuwan28@gmail.com> 
- * Revised for TYPO3 3.6 2/2003 by Kasper Skårhøj 
- * XHTML compliant content
  */
 
-// Script Classes
-// ***************************
 class ux_localRecordList extends  localRecordList {
 	
 	var $setFields=array();				// Fields to display for the current table
@@ -79,25 +74,6 @@ class ux_localRecordList extends  localRecordList {
 		// Get configuration of collapsed tables from user uc and merge with sanitized GP vars
 		$this->tablesCollapsed = is_array($GLOBALS['BE_USER']->uc['moduleData']['db_list.php']) ? $GLOBALS['BE_USER']->uc['moduleData']['db_list.php'] : array();		
 		
-		
-		/**
-		 *remove this collapse table configurations setup to ajax functionality.. class.tx_nsdynamicc_collapse.php
-		 *
-		  $collapseOverride = t3lib_div::_GP('collapse');
-		if (is_array($collapseOverride)) {				
-			foreach($collapseOverride as $collapseTable => $collapseValue) {
-				if (is_array($GLOBALS['TCA'][$collapseTable]) && ($collapseValue == 0 || $collapseValue == 1)) {
-					$this->tablesCollapsed[$collapseTable] = $collapseValue;
-				}
-			}
-			// Save modified user uc
-			$GLOBALS['BE_USER']->uc['moduleData']['db_list.php'] = $this->tablesCollapsed;
-			$GLOBALS['BE_USER']->writeUC($GLOBALS['BE_USER']->uc);
-			if (t3lib_div::_GP('returnUrl')) {
-				$location = t3lib_div::_GP('returnUrl');
-				t3lib_utility_Http::redirect($location);
-			}
-		} */
 
 		if ($sL>0)	{
 			$tree = $this->getTreeObject($id,$sL,$this->perms_clause);
@@ -502,7 +478,7 @@ function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = 
 	if($moveId !='' && !$this->sortField && !$this->searchLevels) {
 		$move_icon_dpath = t3lib_extMgm::extRelPath("nsdynamicc").'icon/move_row_new.png';		
 		$move_icon = '<span><img class="handle" id="handle_sort_'.$moveId.'" src="'.$move_icon_dpath.'" alt="Move" /></span>';
-		$icon = $move_icon.$icon;
+		$icon = $move_icon.'<span>'.$icon.'</span>';
 	}
 		// Show icon and lines
 	if ($this->showIcon)	{

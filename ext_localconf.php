@@ -46,6 +46,12 @@ $TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_tceforms.php']['tceformsTypeSe
 //viewBigHook: is used to change display informtion dialog box to Ext model window
 $TYPO3_CONF_VARS['SC_OPTIONS']['typo3/class.db_list_extra.inc']['viewBigClass'][] = 'EXT:nsdynamicc/classes/class.tx_nsdynamicc_helptips.php:&tx_nsdynamicc_helptips';
 
+//addMoveIconClass: is used to add move icon to the row item 
+$TYPO3_CONF_VARS['SC_OPTIONS']['typo3/class.db_list_extra.inc']['addMoveIconClass'][] = 'EXT:nsdynamicc/classes/class.tx_nsdynamicc_sort.php:&tx_nsdynamicc_sort';
+
+//addMoveIconClass: is used to add move icon to the row item 
+$TYPO3_CONF_VARS['SC_OPTIONS']['typo3/class.db_list_extra.inc']['removeSelectBoxClass'][] = 'EXT:nsdynamicc/classes/class.tx_nsdynamicc_display.php:&tx_nsdynamicc_display';
+
 }
 
 ?>

@@ -26,4 +26,10 @@ table.typo3-dblist tr td.move-icon { padding-top: 0; padding-bottom: 0;  }
 div.form-container input:focus, div.form-container input.error:focus, div.form-container textarea:focus { border-color:#FFCC66; }
 div.form-container input, div.form-container textarea { border-color:#666666 #DDDDDD #DDDDDD #666666; border-style:solid; border-width:1px; margin-bottom:0; margin-top:0; }
 
+/** quick edit link */
+.quick-edit { margin-left: 10px; }
+
+/** overwrite core styles*/
+table.typo3-dblist tr td.col-icon { width: 40px; }
+table.typo3-dblist tr td.col-control { width: 270px; }
 

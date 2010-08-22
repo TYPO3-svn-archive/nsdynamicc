@@ -1,8 +1,5 @@
 /*!
- * Ext JS Library 3.2.1
- * Copyright(c) 2006-2010 Ext JS, Inc.
- * licensing@extjs.com
- * http://www.extjs.com/license
+ * @author Nuwan Sameera nuwan28@gmail.com
  */
 
 Ext.onReady(function(){
@@ -11,8 +8,7 @@ Ext.onReady(function(){
     
     Ext.select('a.typo3-csh-link').each(function(el){
         //get the id of each doms
-        getTipID = el.id;
-        //alert(getTipID);
+        getTipID = el.id;        
         //remove actoin of help link
         Ext.get(getTipID).on('click', function(e){
             e.stopEvent();  
